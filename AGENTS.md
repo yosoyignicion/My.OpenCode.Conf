@@ -126,6 +126,7 @@ Runtime state lives **outside the project**. Never recreate it inside.
 - **Running `bun test` in second-termux-v2.** Uses `tsx`, not bun. `pnpm test` (or `npm test`) is correct there.
 - **Running `bun test` over all of `engram+zerotoken/test/`.** Was: `engram.test.ts` imported `better-sqlite3` (Node-only); bun cannot dlopen it (oven-sh/bun#4290). **Fixed in the refactor commit**: `engram.test.ts` now uses `bun:sqlite` and `npm test` works as expected. If you reintroduce `better-sqlite3` for any reason, restore the dual-runner workaround from git history.
 - **Trusting prose over filesystem for skill count.** README, router footer, and filesystem disagree (228/231/249). Always run `find`.
+- **Stale shims in `~/.local/bin/{st,bgx,second-termux}`.** They hardcode the absolute path to the repo. If the repo is renamed or moved, the shims point to a non-existent path and `st version` fails with `MODULE_NOT_FOUND`. **Fix**: rewrite the 3 shims with the new path + `chmod +x`. **Better fix**: use `ln -sf` symlinks pointing to `$(realpath <repo>)/second-termux-v2/dist/cli/{st,bgx}.js` so renames are auto-tracked. The MCP `second-termux` uses an absolute path in `opencode.jsonc` (not the shims), so a stale shim only breaks shell usage — not the MCP connection.
 
 ---
 
