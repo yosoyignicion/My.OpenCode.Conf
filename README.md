@@ -1,18 +1,196 @@
-# my-opencode
+<!-- MY·CONF README · darkmode red/black/white · v1.0 -->
 
-```
-███╗   ███╗██╗   ██╗       ██████╗ ██████╗ ███████╗███╗   ██╗ ██████╗ ██████╗ ██████╗ ███████╗
-████╗ ████║╚██╗ ██╔╝      ██╔══██╗██╔══██╗██╔════╝████╗  ██║██╔════╝██╔═══██╗██╔══██╗██╔════╝
-██╔████╔██║ ╚████╔╝ █████╗██████╔╝██████╔╝█████╗  ██╔██╗ ██║██║     ██║   ██║██║  ██║█████╗
-██║╚██╔╝██║  ╚██╔╝  ╚════╝██╔═══╝ ██╔══██╗██╔══╝  ██║╚██╗██║██║     ██║   ██║██║  ██║██╔══╝
-██║ ╚═╝ ██║   ██║         ██║     ██║  ██║███████╗██║ ╚████║╚██████╗╚██████╔╝██████╔╝███████╗
-╚═╝     ╚═╝   ╚═╝         ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝
-                                                                                          v1.0
-```
+<style>
+  :root {
+    --bg: #0D0D0D;
+    --surface: #121212;
+    --surface-hi: #1E1E1E;
+    --border: #2A2A2A;
+    --text: #E0E0E0;
+    --text-dim: #A0A0A0;
+    --text-bright: #FFFFFF;
+    --red: #DC2626;
+    --red-neon: #FF1744;
+    --red-glow: rgba(255, 23, 68, 0.45);
+    --mono: ui-monospace, 'JetBrains Mono', 'Cascadia Mono', 'SF Mono', Menlo, Consolas, monospace;
+    --display: 'Bebas Neue', 'Oswald', Impact, 'Helvetica Neue Condensed', 'Arial Narrow', sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #FAFAFA;
+      --surface: #FFFFFF;
+      --surface-hi: #F0F0F0;
+      --border: #D4D4D4;
+      --text: #1A1A1A;
+      --text-dim: #555;
+      --text-bright: #000;
+      --red: #B91C1C;
+      --red-neon: #DC2626;
+      --red-glow: rgba(220, 38, 38, 0.25);
+    }
+  }
+  /* Reset to look like the rest of GitHub's UI but with our accents */
+  html { background: var(--bg); }
+  body { color: var(--text); }
+  /* Animated accent for headlines */
+  @keyframes mc-glow {
+    0%, 100% { text-shadow: 0 0 0 transparent, 0 0 0 transparent; }
+    50%      { text-shadow: 0 0 8px var(--red-glow), 0 0 22px var(--red-glow), 0 0 2px var(--red); }
+  }
+  @keyframes mc-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @keyframes mc-scan {
+    0%   { background-position: 0 0; }
+    100% { background-position: 0 8px; }
+  }
+  @keyframes mc-blink {
+    0%, 49% { opacity: 1; }
+    50%,100% { opacity: 0.25; }
+  }
+  .mc-display {
+    font-family: var(--display);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-bright);
+  }
+  .mc-mono { font-family: var(--mono); }
+  .mc-red  { color: var(--red-neon); }
+  .mc-glow { animation: mc-glow 3.2s ease-in-out infinite; }
+  .mc-blink { animation: mc-blink 1.1s steps(1) infinite; }
+  .mc-marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 8px 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .mc-marquee__track {
+    display: inline-block;
+    padding-left: 100%;
+    animation: mc-marquee 60s linear infinite;
+  }
+  .mc-marquee__track span { margin: 0 18px; }
+  .mc-marquee__track span::before { content: '◆'; color: var(--red); margin-right: 6px; }
+  .mc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    padding: 18px 22px;
+    border-radius: 0;
+    margin: 18px 0;
+  }
+  .mc-card h3 { margin-top: 0; color: var(--text-bright); }
+  .mc-cta {
+    display: inline-block;
+    padding: 10px 22px;
+    border: 2px solid var(--red);
+    color: var(--red-neon);
+    font-family: var(--display);
+    font-size: 18px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.18s ease;
+  }
+  .mc-cta:hover {
+    background: var(--red);
+    color: var(--text-bright);
+    box-shadow: 0 0 18px var(--red-glow);
+  }
+  .mc-ascii {
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.05;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .mc-ascii .hi { color: var(--red-neon); }
+  .mc-ascii .br { color: var(--text-bright); }
+  .mc-banner-red  { color: var(--red-neon); text-shadow: 0 0 10px var(--red-glow); }
+  .mc-banner-white { color: var(--text-bright); }
+  .mc-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: var(--surface);
+    margin-right: 6px;
+  }
+  .mc-tag--red { color: var(--red-neon); border-color: var(--red); }
+  /* Scanline overlay for code blocks (subtle) */
+  pre {
+    position: relative;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0,
+        transparent 3px,
+        rgba(255,255,255,0.012) 3px,
+        rgba(255,255,255,0.012) 4px
+      );
+  }
+  /* Kill all motion if user requests it */
+  @media (prefers-reduced-motion: reduce) {
+    .mc-glow, .mc-blink, .mc-marquee__track { animation: none !important; }
+  }
+  /* Tables: tighter, red-accented first column */
+  table { border-collapse: collapse; }
+  table th, table td { border: 1px solid var(--border) !important; padding: 8px 12px; }
+  table th { background: var(--surface-hi); color: var(--text-bright); }
+  table tr td:first-child { color: var(--red-neon); font-weight: 600; }
+  /* Headings: typographic rhythm */
+  h1, h2 { font-family: var(--display); letter-spacing: 0.02em; text-transform: uppercase; }
+  h2 { border-bottom: 2px solid var(--red); padding-bottom: 4px; }
+  h3 { color: var(--text-bright); }
+  /* Inline code accent */
+  code { color: var(--red-neon) !important; background: var(--surface) !important; }
+  a { color: var(--red-neon); }
+  hr { border: none; border-top: 1px solid var(--border); }
+  blockquote {
+    border-left: 4px solid var(--red);
+    background: var(--surface);
+    padding: 12px 18px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+</style>
 
-> *Un bundle open-source que convierte `opencode` en algo serio: 249 skills bajo demanda, memoria persistente, y un orquestador que devuelve una sola línea premium en vez de inundar tu terminal.*
+<!-- ░▒▓ BANNER ▓▒░ -->
+<pre class="mc-ascii">
+<span class="mc-banner-red">███╗   ███╗██╗   ██╗      ██████╗ ██████╗ ███╗   ██╗███████╗</span>
+<span class="mc-banner-red">████╗ ████║╚██╗ ██╔╝     ██╔════╝██╔═══██╗████╗  ██║██╔════╝</span>
+<span class="mc-banner-red">██╔████╔██║ ╚████╔╝ ████╗██║     ██║   ██║██╔██╗ ██║█████╗  </span>
+<span class="mc-banner-red">██║╚██╔╝██║  ╚██╔╝  ╚═══╝██║     ██║   ██║██║╚██╗██║██╔══╝  </span>
+<span class="mc-banner-red">██║ ╚═╝ ██║   ██║        ╚██████╗╚██████╔╝██║ ╚████║██║     </span>
+<span class="mc-banner-red">╚═╝     ╚═╝   ╚═╝         ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     </span>
+                                                                  
+<span class="mc-banner-white">      ╔═╗╔═╗╔╗╔   ╔═╗╔╗╔╔═╗</span>
+<span class="mc-banner-white">      ║  ║ ║║║║───║╣ ║║║║╦╝</span>
+<span class="mc-banner-white">      ╚═╝╚═╝╝╚╝   ╚═╝╝╚╝╩╚═</span>
+                                                                  
+                          <span class="mc-red mc-glow">v1.0</span>  ·  <span class="hi">MIT</span>  ·  <span class="br">DARK</span>
+</pre>
 
-**Open source · Listo para probar · Se puede desinstalar**
+> *Un bundle open-source que convierte `opencode` en algo serio: **250 skills** bajo demanda, memoria persistente entre sesiones, y un orquestador que devuelve una **sola línea premium** en vez de inundar tu terminal.*
+
+<span class="mc-tag mc-tag--red">DARK MODE</span>
+<span class="mc-tag">v1.0.0</span>
+<span class="mc-tag">MIT</span>
+<span class="mc-tag">250 SKILLS</span>
+<span class="mc-tag">3 MCPs</span>
+<span class="mc-tag">REVERSIBLE</span>
 
 ---
 
@@ -22,55 +200,63 @@
 
 `my-opencode` nació de una pregunta simple: **¿qué pasaría si opencode viniera con memoria, habilidades, y un protocolo de ejecución que respeta tu atención?** La respuesta no es otra app monolítica. Es un **bundle de tres proyectos independientes** que se conectan mediante un protocolo abierto y un prompt maestro que se autoconfigura en cualquier sistema operativo.
 
-No es magia. Es ingeniería honesta: TypeScript, SQLite, FTS5, y un montón de iteraciones hasta que la fricción desapareció.
+No es magia. Es ingeniería honesta: **TypeScript, SQLite, FTS5, y un montón de iteraciones hasta que la fricción desapareció.**
 
 > *Te invito a probarlo, a romperlo, a leer el código, y a decirme qué cambiarías. El proyecto está vivo, se actualiza, y se puede desinstalar limpiamente. Sin lock-in, sin telemetría oculta, sin sorpresas.*
 
-— ignicion, 2026
+— <span class="mc-red">ignicion</span>, 2026
 
 ---
+
+<!-- ░▒▓ MARQUEE — 60-second pitch ▓▒░ -->
+<div class="mc-marquee">
+  <div class="mc-marquee__track">
+    <span>250 SKILLS</span><span>MEMORIA PERSISTENTE</span><span>MCP-NATIVE</span><span>ZERO-TOKEN</span><span>BACKGROUND JOBS</span><span>FTS5 + TRIGRAM</span><span>AUTO-HEAL</span><span>CONTEXT7 DOCS</span><span>ENGRAM DECAY</span><span>BRIDGE PREDICTOR</span><span>PHOENIX RECOVERY</span><span>TRÍADA STACK</span>
+    <span>250 SKILLS</span><span>MEMORIA PERSISTENTE</span><span>MCP-NATIVE</span><span>ZERO-TOKEN</span><span>BACKGROUND JOBS</span><span>FTS5 + TRIGRAM</span><span>AUTO-HEAL</span><span>CONTEXT7 DOCS</span><span>ENGRAM DECAY</span><span>BRIDGE PREDICTOR</span><span>PHOENIX RECOVERY</span><span>TRÍADA STACK</span>
+  </div>
+</div>
 
 ## ⚡ Lo que obtienes (en 60 segundos)
 
 | Capacidad | Antes (opencode pelado) | Con `my-opencode` |
 |---|---|---|
 | **Memoria entre sesiones** | ❌ Empiezas de cero cada vez | ✅ SQLite con FTS5, 8 tipos, decay automático |
-| **Skills técnicas** | ❌ Traes las tuyas | ✅ 249 skills curadas (Next.js, K8s, Go, Rust, ML, diseño, ...) |
-| **Skills de diseño** | ❌ Manual | ✅ 14 skills de iconografía, tipografía, badges, motion |
+| **Skills técnicas** | ❌ Traes las tuyas | ✅ 250 skills curadas (Next.js, K8s, Go, Rust, ML, ...) |
+| **Skills de diseño** | ❌ Manual | ✅ 13 skills de iconografía, tipografía, badges, motion |
 | **Background jobs** | ⚠️ Inundan la TUI con logs | ✅ Una sola línea `✨ name ✓ 0 (3.2s) @HH:MM:SS` |
 | **Docs actualizadas** | ❌ El LLM alucina APIs | ✅ Context7 trae docs oficiales en vivo |
-| **Respuestas ruidosas** | ❠ Saludos, despedidas, párrafos | ✅ ≤10 palabras o JSON, sin preámbulos |
-| **Errores recurrentes** | ❠ Aprende a base de cicatrices | ✅ Engram auto-guarda error→fix cuando se repite |
-| **Personalización** | ❠ Editas `~/.config/opencode/` a mano | ✅ Un prompt maestro que lo hace por ti |
+| **Respuestas ruidosas** | ⚠️ Saludos, despedidas, párrafos | ✅ ≤10 palabras o JSON, sin preámbulos |
+| **Errores recurrentes** | ⚠️ Aprende a base de cicatrices | ✅ Engram auto-guarda error→fix cuando se repite |
+| **Personalización** | ⚠️ Editas `~/.config/opencode/` a mano | ✅ Un prompt maestro que lo hace por ti |
 
 ---
 
 ## 🏗️ Cómo está montado
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│  my-opencode  (config bundle, sin código de instalación)            │
-│                                                                     │
-│  ┌───────────────────┐  ┌───────────────────┐  ┌────────────────┐ │
-│  │  skill-matrix/    │  │  second-termux-v2/ │  │ engram+zero.../ │ │
-│  │                   │  │                    │  │                │ │
-│  │  249 SKILL.md     │  │  MCP server        │  │ opencode       │ │
-│  │  + template       │  │  + 3 shims (st,    │  │ plugin         │ │
-│  │  + 14 design      │  │  bgx, second-      │  │ + SQLite +     │ │
-│  │    skills         │  │  termux)           │  │   FTS5 +       │ │
-│  │                   │  │  + premium line    │  │   bun:sqlite   │ │
-│  │  Markdown only    │  │  + auto-heal       │  │                │ │
-│  └───────────────────┘  └───────────────────┘  └────────────────┘ │
-│         ▲                          ▲                     ▲         │
-│         └──────────────────────────┴─────────────────────┘         │
-│                       Conectados por 3 MCPs:                       │
-│                  context7 · sqlite · second-termux                  │
-└─────────────────────────────────────────────────────────────────────┘
-```
+<pre class="mc-ascii">
+<span class="br">┌─────────────────────────────────────────────────────────────────────┐</span>
+<span class="br">│</span>  <span class="hi">my-opencode</span>  (config bundle, sin código de instalación)            <span class="br">│</span>
+<span class="br">│</span>                                                                     <span class="br">│</span>
+<span class="br">│</span>  <span class="br">┌───────────────────┐</span>  <span class="br">┌───────────────────┐</span>  <span class="br">┌────────────────┐</span> <span class="br">│</span>
+<span class="br">│</span>  <span class="br">│</span>  <span class="hi">skill-matrix/</span>    <span class="br">│</span>  <span class="br">│</span>  <span class="hi">second-termux-v2/</span> <span class="br">│</span>  <span class="br">│</span> <span class="hi">engram+zero.../</span> <span class="br">│</span> <span class="br">│</span>
+<span class="br">│</span>  <span class="br">│</span>                   <span class="br">│</span>  <span class="br">│</span>                    <span class="br">│</span>  <span class="br">│</span>                <span class="br">│</span> <span class="br">│</span>
+<span class="br">│</span>  <span class="br">│</span>  <span class="mc-red">250 SKILL.md</span>     <span class="br">│</span>  <span class="br">│</span>  <span class="mc-red">MCP server</span>        <span class="br">│</span>  <span class="br">│</span> <span class="mc-red">opencode</span>       <span class="br">│</span> <span class="br">│</span>
+<span class="br">│</span>  <span class="br">│</span>  <span class="br">+ template</span>       <span class="br">│</span>  <span class="br">│</span>  <span class="br">+ 3 shims (st,</span>    <span class="br">│</span>  <span class="br">│</span> <span class="br">plugin</span>         <span class="br">│</span> <span class="br">│</span>
+<span class="br">│</span>  <span class="br">│</span>  <span class="br">+ 13 design</span>      <span class="br">│</span>  <span class="br">│</span>  <span class="br">bgx, second-</span>      <span class="br">│</span>  <span class="br">│</span> <span class="br">+ SQLite +</span>     <span class="br">│</span> <span class="br">│</span>
+<span class="br">│</span>  <span class="br">│</span>    <span class="br">skills</span>         <span class="br">│</span>  <span class="br">│</span>  <span class="br">termux)</span>           <span class="br">│</span>  <span class="br">│</span>  <span class="br">FTS5 +</span>         <span class="br">│</span> <span class="br">│</span>
+<span class="br">│</span>  <span class="br">│</span>                   <span class="br">│</span>  <span class="br">│</span>  <span class="br">+ premium line</span>    <span class="br">│</span>  <span class="br">│</span>  <span class="br">bun:sqlite</span>     <span class="br">│</span> <span class="br">│</span>
+<span class="br">│</span>  <span class="br">│</span>  <span class="br">Markdown only</span>    <span class="br">│</span>  <span class="br">│</span>  <span class="br">+ auto-heal</span>       <span class="br">│</span>  <span class="br">│</span>                <span class="br">│</span> <span class="br">│</span>
+<span class="br">│</span>  <span class="br">└───────────────────┘</span>  <span class="br">└───────────────────┘</span>  <span class="br">└────────────────┘</span> <span class="br">│</span>
+<span class="br">│</span>         <span class="mc-red">▲</span>                          <span class="mc-red">▲</span>                     <span class="mc-red">▲</span>         <span class="br">│</span>
+<span class="br">│</span>         <span class="br">└──────────────────────────┴─────────────────────┘</span>         <span class="br">│</span>
+<span class="br">│</span>                       <span class="hi">Conectados por 3 MCPs:</span>                       <span class="br">│</span>
+<span class="br">│</span>              <span class="mc-red">context7</span> · <span class="mc-red">sqlite</span> · <span class="mc-red">second-termux</span>              <span class="br">│</span>
+<span class="br">└─────────────────────────────────────────────────────────────────────┘</span>
+</pre>
 
 | Proyecto | Qué hace | Lenguaje | Build |
 |---|---|---|---|
-| [`skill-matrix/`](skill-matrix/README.md) | 249 skills (técnicas + diseño + auto-healing), formato SKILL.md de 9 secciones | Markdown | — |
+| [`skill-matrix/`](skill-matrix/README.md) | 250 skills (técnicas + diseño + auto-healing), formato SKILL.md de 9 secciones | Markdown | — |
 | [`second-termux-v2/`](second-termux-v2/README.md) | MCP server que ejecuta jobs en background y devuelve una línea premium | TypeScript (ESM) | `npm run build` |
 | [`engram+zerotoken/`](engram+zerotoken/README.md) | Plugin opencode con memoria tipada en SQLite+FTS5, auto-save, decay | TypeScript (Bun) | sin build step |
 
@@ -82,7 +268,7 @@ No es magia. Es ingeniería honesta: TypeScript, SQLite, FTS5, y un montón de i
 
 > *Esta sección es la que mucha gente se salta y luego se pierde. Léela, son 3 minutos.*
 
-`my-opencode` **no** trae su propio protocolo de ejecución. En su lugar, **hereda** el `AGENTS.md` global de opencode (424 líneas, en `~/.config/opencode/AGENTS.md`). Esto es intencional: el proyecto no quiere reinventar cómo le hablas a un agente, prefiere sumarse al estándar que opencode ya mantiene.
+`my-opencode` **no** trae su propio protocolo de ejecución. En su lugar, **hereda** el `AGENTS.md` global de opencode (~424 líneas, en `~/.config/opencode/AGENTS.md`). Esto es intencional: el proyecto no quiere reinventar cómo le hablas a un agente, prefiere sumarse al estándar que opencode ya mantiene.
 
 ### ¿Qué hay dentro del AGENTS.md global?
 
@@ -142,20 +328,16 @@ curl -fsSL https://opencode.ai/install | bash
 >      - sqlite3 native binding (via `python3 make g++` on Debian/Ubuntu,
 >        `xcode-select --install` on macOS, skip on Windows/WSL if pre-built)
 >
-> 2. SKILLS — Copy the repo's skill-matrix/skills-matrix/ into your global skills root
->    so the catalog is auto-discovered without per-project config:
->      - On Linux/macOS: ~/.config/opencode/skills-matrix
->      - On Windows/WSL: %USERPROFILE%\.config\opencode\skills-matrix
->    Use `cp -a` (or `Copy-Item -Recurse` on PowerShell). Verify with `ls` that
->    `00-standard-skill-template/SKILL.md` is reachable. All 249 skills (incl.
->    design + auto-healing) live in this single folder.
+> 2. SKILLS — Register the catalog with opencode by adding ABSOLUTE paths to
+>    `~/.config/opencode/opencode.jsonc → skills.paths[]` (opencode auto-discovers
+>    all SKILL.md folders under each path on startup; no copying required):
+>      - <repo>/skill-matrix/skills-matrix
+>      - <repo>/second-termux-v2/opencode-integration
+>    Verify the array contains the new entries with `jq '.skills.paths'`. After
+>    patching, RESTART the opencode TUI to reload the catalog.
 >
-> 3. CONFIG PATCH — Edit ~/.config/opencode/opencode.jsonc (or the opencode global
->    config on your OS). Back up the file first: opencode.jsonc.bak.YYYYMMDDHHMMSS.
->    Then add or merge these blocks:
->      - skills.paths += [absolute paths to skill-matrix/skills-matrix,
->        second-termux-v2/opencode-integration]
->      - instructions += [absolute path to skill-matrix/AGENTS.md]
+> 3. CONFIG PATCH — Edit ~/.config/opencode/opencode.jsonc. Back up first:
+>    opencode.jsonc.bak.YYYYMMDDHHMMSS. Then merge these blocks:
 >      - mcp.context7 = { type: "remote", url: "https://mcp.context7.com/mcp", enabled: true }
 >      - mcp.sqlite   = { type: "local",  command: ["npx","-y","mcp-sqlite","./data.db"], enabled: true }
 >    Re-serialise with JSON.stringify. Comments in the original config will be lost
@@ -164,24 +346,23 @@ curl -fsSL https://opencode.ai/install | bash
 > 4. SECOND-TERMUX — Build the orchestrator:
 >      - `cd <repo>/second-termux-v2 && npm install && npm run build`
 >      - Link the 3 shims into a directory on PATH: st, bgx, second-termux
->        (default: ~/.local/bin/ on Linux/macOS, $env:LOCALAPPDATA on Windows/WSL)
->      - Register the MCP server in opencode.jsonc (the second-termux/install.sh
->        sub-installer used to do this; if missing, add manually with
->        command = ["node", "<repo>/second-termux-v2/dist/src/server.js"])
+>        (default: ~/.local/bin/ on Linux/macOS, $env:LOCALAPPDATA on Windows/WSL).
+>        Use `ln -sf` to a `realpath <repo>`-based target for rename-resilience.
+>      - Register the MCP server in opencode.jsonc with the absolute path to
+>        <repo>/second-termux-v2/dist/src/server.js
 >
 > 5. ENGRAM — Set up the memory plugin:
 >      - `cd <repo>/engram+zerotoken && bun install`
 >      - Ensure the global DB dir exists: `mkdir -p ~/.engram`
->      - The plugin loads via opencode.jsonc plugin[] array pointing to
->        ["./src/engram.ts"] with auto_save + injection config (the sub-readme
->        has the canonical block)
+>      - Register the plugin in opencode.jsonc plugin[] with an absolute file:// URL:
+>        ["file://<repo>/engram+zerotoken/src/engram.ts", { auto_save, injection }]
 >
 > 6. SMOKE CHECKS — Run and report each. All must pass:
 >      - `opencode mcp list`               → must show context7, sqlite, second-termux all connected
 >      - `st version`                      → must print "second-termux v2.x.x"
 >      - `bgx echo "smoke"`                → must print a line starting with ✨
 >      - `ls -la ~/.engram/`               → must exist and be writable
->      - `find <repo>/skill-matrix/skills-matrix -maxdepth 1 -mindepth 1 -type d | wc -l`  → must be ≥ 230
+>      - `find <repo>/skill-matrix/skills-matrix -maxdepth 1 -mindepth 1 -type d | wc -l`  → must be ≥ 250
 >      - `bun test <repo>/engram+zerotoken/test/`  → all tests pass
 >      - `sqlite3 --version`               → must print a version
 >
@@ -199,12 +380,12 @@ curl -fsSL https://opencode.ai/install | bash
 | # | Validación | Criterio de éxito |
 |---|---|---|
 | 1 | Prereqs | node ≥20, bun ≥1, opencode en PATH, sqlite3 build chain |
-| 2 | Skills discovery | `00-standard-skill-template/SKILL.md` visible desde `~/.config/opencode/skills-matrix/` |
+| 2 | Skills discovery | `00-standard-skill-template/SKILL.md` visible desde `skills.paths[]` |
 | 3 | Config patch | `opencode.jsonc` válido (parseable por node), 4 bloques mergeados, backup timestamped |
 | 4 | Second-termux | `st` corre, `bgx` genera línea `✨`, dist/ contiene `server.js` |
 | 5 | Engram | `bun test` pasa, `~/.engram/` escribible, plugin entrypoint existe |
 | 6 | Smoke checks | 7/7 verdes |
-| 7 | Memoria | Cada paso guardado en Engram con prefijo `install:my-opencore:` |
+| 7 | Memoria | Cada paso guardado en Engram con prefijo `install:my-opencode:` |
 | 8 | Rollback | Si algo falla, el paso concreto se revierte (no rollback total) |
 
 ### Por qué esto y no un `install.sh`
@@ -266,9 +447,8 @@ a failure.
    (highest timestamp). Copy it back to opencode.jsonc. If no backup exists,
    warn the user and stop — do not delete the active config.
 
-2. REMOVE SKILLS — Delete the copy you created in step 2 of the install prompt:
-      - Linux/macOS: rm -rf ~/.config/opencode/skills-matrix
-      - Windows/WSL: Remove-Item -Recurse -Force $env:USERPROFILE\.config\opencode\skills-matrix
+2. REMOVE SKILLS — Edit opencode.jsonc and remove the entries from
+   `skills.paths[]` that point into the repo (do not touch unrelated paths).
 
 3. UNREGISTER MCPs — Edit opencode.jsonc (restored in step 1) and remove the
    mcp.context7, mcp.sqlite, mcp.second-termux blocks you added in install step 3.
@@ -297,12 +477,13 @@ a failure.
 Si solo quieres quitar el bundle y conservar opencode tal cual:
 
 ```bash
-# Esto elimina las skills, MCPs, y binarios, restaurando tu config previa
-rm -rf ~/.config/opencode/skills-matrix \
-       ~/.local/bin/{st,bgx,second-termux} \
+# Esto elimina los shims y el state de second-termux, restaurando tu config previa
+rm -f  ~/.local/bin/{st,bgx,second-termux} \
        ~/.local/share/second-termux/
 cp -a $(ls -t ~/.config/opencode/opencode.jsonc.bak.* | head -1) \
       ~/.config/opencode/opencode.jsonc
+# Quita las entradas del repo de opencode.jsonc (skills.paths[], mcp.second-termux, plugin[])
+# con `jq` antes de restaurar si quieres limpieza quirúrgica.
 echo "✨ my-opencode desinstalado (tu ~/.engram/ queda intacto si quieres conservarlo)"
 ```
 
@@ -311,8 +492,7 @@ echo "✨ my-opencode desinstalado (tu ~/.engram/ queda intacto si quieres conse
 ### Opción C — Nuclear (borrar todo, incluyendo memoria)
 
 ```bash
-rm -rf ~/.config/opencode/skills-matrix \
-       ~/.local/bin/{st,bgx,second-termux} \
+rm -rf ~/.local/bin/{st,bgx,second-termux} \
        ~/.local/share/second-termux/ \
        ~/.engram/                         # ← solo si estás seguro
 cp -a $(ls -t ~/.config/opencode/opencode.jsonc.bak.* | head -1) \
@@ -355,13 +535,27 @@ curl -fsSL https://bun.sh/install | bash
 2. Compara con el backup más reciente: `diff <(jq -S . ~/.config/opencode/opencode.jsonc) <(jq -S . $(ls -t ~/.config/opencode/opencode.jsonc.bak.* | head -1))`
 3. Re-ejecuta el prompt maestro (es idempotente).
 
+### `st version` falla con `MODULE_NOT_FOUND` (y el MCP dice "connected")
+
+**Causa:** los 3 shims en `~/.local/bin/{st,bgx,second-termux}` apuntan a un path obsoleto del repo (típico después de renombrar/mover el repo). El MCP usa un path absoluto en `opencode.jsonc`, por eso no se entera. **Fix:**
+```bash
+# Reescribe los 3 shims con el path actual (o usa ln -sf para resiliencia)
+REPO=$(realpath <path/to/my-opencode>)
+for tool in st bgx second-termux; do
+  printf '#!/bin/bash\nexec node %s/second-termux-v2/dist/cli/%s.js "$@"\n' \
+    "$REPO" "${tool/second-termux/st}" > ~/.local/bin/$tool
+  chmod +x ~/.local/bin/$tool
+done
+st version   # → "second-termux v2.x.x"
+```
+
 ### Las skills no se cargan en opencode
 
 **Causa:** los paths en `skills.paths[]` apuntan a carpetas inexistentes o son relativos en vez de absolutos. **Fix:**
 ```bash
 # Los paths deben ser ABSOLUTOS
 jq '.skills.paths' ~/.config/opencode/opencode.jsonc
-# Esperado: ["/home/ignicion/Documentos/dev-space/My.OpenCode.Conf/skill-matrix/skills-matrix", ...]
+# Esperado: ["/home/<user>/.../My.OpenCode.Conf/skill-matrix/skills-matrix", ...]
 
 # Después, REINICIA el TUI de opencode (no basta con cerrar y abrir)
 ```
@@ -394,18 +588,31 @@ my-opencode/
 ├── README.md                              ← este archivo
 ├── LICENSE                                ← MIT © 2026 ignicion
 ├── .gitignore
+├── scripts/
+│   └── with-safe-env.sh                   ← sanitiza $TERM para los shims (Kitty/Alacritty)
 │
-├── skill-matrix/                          ← 249 skills (técnicas + diseño + auto-healing)
-│   ├── AGENTS.md                          ← (símbolo del router, no se commitea)
+├── skill-matrix/                          ← 250 skills (técnicas + diseño + auto-healing)
 │   ├── README.md                          ← tour del catálogo
-│   └── skills-matrix/                     ← 249 SKILL.md (técnicas + diseño + auto-healing)
+│   └── skills-matrix/                     ← 250 SKILL.md
 │       ├── 00-standard-skill-template/
 │       ├── opencode-documentation/        ← docs oficiales de opencode
 │       ├── plugins-extensions/            ← OCS-flavored plugin protocol
 │       ├── auto-healing/                  ← 10 skills de resiliencia y recuperación
+│       ├── dev-environment/               ← 1 skill (auto-binding-rebuild)
 │       ├── advanced-effects/              ← skills de diseño (consolidadas aquí)
 │       ├── badge-system/
-│       └── ... (242 más, ver INDEX.md)
+│       ├── color-basics/
+│       ├── composition-layout/
+│       ├── cultural-references/
+│       ├── dark-mode/
+│       ├── design-thinking/
+│       ├── emotional-design/
+│       ├── gamification-rewards/
+│       ├── icon-symbolism/
+│       ├── motion-ui/
+│       ├── trends-forecasting/
+│       ├── typography-phonk/
+│       └── ... (233 más, ver INDEX.md)
 │
 ├── second-termux-v2/                      ← MCP server de background jobs
 │   ├── README.md                          ← arquitectura, tests, sistema de heal
@@ -417,8 +624,8 @@ my-opencode/
 └── engram+zerotoken/                      ← Plugin de memoria persistente
     ├── README.md                          ← schema, tipos, auto-save
     ├── src/                               ← TypeScript (Bun + bun:sqlite)
-    │   └── engram.ts                      ← entrypoint del plugin (204 líneas)
-    ├── test/                              ← bun test (6 archivos)
+    │   └── engram.ts                      ← entrypoint del plugin
+    ├── test/                              ← bun test (5 .ts + 1 .sh)
     ├── opencode.json                      ← config per-subdir (auto-carga el plugin)
     └── package.json
 ```
@@ -433,7 +640,7 @@ my-opencode/
 
 ```
 Explore ~/path/to/my-opencode/. Read AGENTS.md (root) for repo-specific traps,
-then ~/.config/opencode/AGENTS.md (global router, 424 lines) for the dual-agent
+then ~/.config/opencode/AGENTS.md (global router, ~424 lines) for the dual-agent
 protocol. The repo has 3 subprojects (skill-matrix, second-termux-v2,
 engram+zerotoken) glued by a prompt maestro — never an install.sh. If you find
 a gap, propose the change following the conventions in the existing files.
@@ -451,7 +658,7 @@ Construido sobre hombros de gigantes:
 - **[Anthropic Agent Skills spec](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)** — formato y convenciones de `SKILL.md`
 - **[Context7](https://context7.com)** — fuente de docs oficiales en vivo
 - **[opencode](https://opencode.ai)** — runtime del agente
-- **249 skills** — autoría mixta (comunidad open-source + curación personal)
+- **250 skills** — autoría mixta (comunidad open-source + curación personal)
 - **Diseño de marca** — paleta Memphis Phonk (`#0D0D0D` `#DC2626` `#FFFFFF`)
 
 > *Gracias por llegar hasta aquí. Si el proyecto te sirvió, una ⭐ en GitHub ayuda más de lo que imaginas. Si te rompió algo, un issue con la salida de `opencode mcp list` + `st version` nos ayuda a arreglarlo en horas, no en días.*
