@@ -1,5 +1,6 @@
 <!-- MY·CONF README · darkmode red/black/white · v2.0 -->
 
+<!--
 <style>
   :root {
     --bg: #0D0D0D;
@@ -166,6 +167,7 @@
     font-style: italic;
   }
 </style>
+-->
 
 <!-- ░▒▓ BANNER ▓▒░ -->
 <pre class="mc-ascii">
