@@ -1,0 +1,50 @@
+{
+  "name": "second-termux",
+  "version": "2.0.0",
+  "description": "Premium minimalist background process orchestrator for opencode TUI — zero-token policy, MCP-native, Engram-aware, heal-capable.",
+  "type": "module",
+  "main": "src/server.ts",
+  "bin": {
+    "st": "dist/cli/st.js",
+    "bgx": "dist/cli/bgx.js"
+  },
+  "files": [
+    "dist/**/*",
+    "opencode-integration/**/*",
+    "install.sh",
+    "scripts/patch-opencode-config.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc && chmod +x dist/src/server.js dist/cli/st.js dist/cli/bgx.js",
+    "start": "node --import tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
+    "st": "tsx cli/st.ts",
+    "bgx": "tsx cli/bgx.ts",
+    "test": "tsx tests/run.ts",
+    "smoke": "tsx tests/smoke.ts",
+    "install:global": "bash ./install.sh",
+    "uninstall:global": "bash ./install.sh --uninstall"
+  },
+  "keywords": [
+    "mcp",
+    "opencode",
+    "background",
+    "tui",
+    "zero-token",
+    "process-manager"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0"
+  }
+}

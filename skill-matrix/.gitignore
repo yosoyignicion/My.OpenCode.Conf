@@ -1,0 +1,26 @@
+# Engram memory database (auto-generated, project-specific)
+.engram/
+
+# Temporary and cache files
+*.log
+*.tmp
+*.bak
+__pycache__/
+*.pyc
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Config overrides (user-specific)
+opencode.local.json
+opencode.local.jsonc

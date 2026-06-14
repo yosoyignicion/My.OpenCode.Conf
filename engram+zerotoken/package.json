@@ -1,0 +1,25 @@
+{
+  "name": "engram-zerotoken",
+  "version": "1.0.0",
+  "description": "Sistema de memoria persistente entre sesiones para opencode. Engram + ZeroToken.",
+  "type": "module",
+  "main": "src/engram.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test test/",
+    "test:render": "bun test test/render.test.ts",
+    "test:decay": "bun test test/decay.test.ts",
+    "test:graph": "bun test test/graph.test.ts",
+    "test:commands": "bun test test/commands.test.ts",
+    "test:smoke": "bash test/smoke.sh",
+    "clean": "rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.16.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.9.2",
+    "better-sqlite3": "^12.10.0",
+    "tsx": "^4.22.4",
+    "typescript": "^5.8.0"
+  }
+}

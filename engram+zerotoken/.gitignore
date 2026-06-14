@@ -1,0 +1,34 @@
+# Engram plugin: bun runtime (no node_modules to commit when used as plugin)
+# But for tests + dev, node_modules is needed; ignore only build outputs.
+node_modules/
+*.log
+*.bak
+*.bak.*
+*.tmp
+
+# TypeScript build artifacts (no build step in runtime, but defensive)
+dist/
+*.tsbuildinfo
+.tsbuild/
+
+# Test coverage
+coverage/
+bun.lockb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local user overrides (project-specific)
+opencode.local.json
+opencode.local.jsonc
+
+# Personal engram snapshot (kept on disk, NOT committed — see repo .gitignore)
+.engram/
