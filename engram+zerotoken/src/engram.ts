@@ -94,9 +94,15 @@ export default (async (_input: Record<string, unknown>, rawOptions?: PluginOptio
           importance: z.number().min(0).max(1).optional().default(0.7).describe("0.0-1.0 (def:0.7)") },
         execute: async (args, ctx): Promise<ToolResult> => {
           const me = ensureEngine(ctx)
-          const scope = args.scope === "global" ? "global" : "project"
+          const requested: "global" | "project" = args.scope === "global" ? "global" : "project"
+          let scope: "global" | "project" = requested
+          let fallbackWarning = ""
+          if (scope === "project" && !ctx?.worktree) {
+            scope = "global"
+            fallbackWarning = `\n${symbols.warning} (no worktree detected — saved to global instead of project)`
+          }
           const record = me.save({ title: args.title, content: args.content, type: args.type as MemoryType, source: "tool", importance: args.importance }, scope)
-          return { output: `${symbols.saved} Memoria guardada (${scope}): "${record.title}" [${record.type}]\nID: ${record.id}`, metadata: { memory_id: record.id, scope } }
+          return { output: `${symbols.saved} Memoria guardada (${scope}): "${record.title}" [${record.type}]\nID: ${record.id}${fallbackWarning}`, metadata: { memory_id: record.id, scope } }
         },
       }),
 

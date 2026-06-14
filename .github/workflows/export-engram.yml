@@ -1,0 +1,84 @@
+name: Export Engram → Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.x
+
+      - name: Install engram deps
+        working-directory: engram+zerotoken
+        run: bun install --frozen-lockfile || bun install
+
+      - name: Export global memories
+        working-directory: engram+zerotoken
+        run: |
+          mkdir -p ../docs
+          bun -e "
+          import('./src/engram.ts').then(async (m) => {
+            const plugin = await m.default({}, {});
+            const status = await plugin.tool.engram_status.execute({}, { worktree: undefined });
+            console.log(status.output);
+          }).catch(e => { console.error(e); process.exit(1); });
+          "
+        continue-on-error: true
+
+      - name: Generate memories.md from global DB
+        working-directory: engram+zerotoken
+        run: |
+          if [ ! -f "$HOME/.engram/.engram.db" ]; then
+            echo "# Engram Memories" > ../docs/memories.md
+            echo "" >> ../docs/memories.md
+            echo "_No memories exported yet. Run the workflow after using opencode with engram enabled._" >> ../docs/memories.md
+            exit 0
+          fi
+          bun -e "
+          import { DatabaseManager } from './src/db.ts';
+          import { MemoryEngine } from './src/memory-engine.ts';
+          import { writeFileSync } from 'fs';
+          const db = new DatabaseManager(process.env.HOME + '/.engram/.engram.db');
+          const engine = new MemoryEngine(db);
+          const rows = db.all('SELECT title,content,type,importance,created_at,source FROM observations ORDER BY importance DESC,created_at DESC LIMIT 200', [], 'global');
+          let md = '# 🧠 Engram Memories (Global)\\n\\n';
+          md += '_Exported automatically on every push to main. Last build: ' + new Date().toISOString() + '\\n\\n';
+          md += '**Total:** ' + rows.length + ' memories\\n\\n';
+          md += '---\\n\\n';
+          const byType = {};
+          for (const r of rows) { byType[r.type] = byType[r.type] || []; byType[r.type].push(r); }
+          for (const [type, list] of Object.entries(byType)) {
+            md += '## ' + type + ' (' + list.length + ')\\n\\n';
+            for (const r of list) {
+              md += '### [' + r.importance.toFixed(2) + '] ' + r.title + '\\n\\n';
+              md += r.content + '\\n\\n';
+              md += '_source: ' + r.source + ' · created: ' + r.created_at.slice(0,10) + '_\\n\\n---\\n\\n';
+            }
+          }
+          writeFileSync('../docs/memories.md', md);
+          console.log('Generated memories.md with ' + rows.length + ' memories');
+          " || echo "# Engram Memories" > ../docs/memories.md
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/memories.md
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore(pages): regenerate memories.md from engram DB"
+            git push
+          fi

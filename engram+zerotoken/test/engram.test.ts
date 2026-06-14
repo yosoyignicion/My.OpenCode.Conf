@@ -132,6 +132,24 @@ dbp.query("DELETE FROM observations WHERE id = ?").run("proj-1")
 const afterDelete = dbp.query("SELECT COUNT(*) as c FROM observations").get() as { c: number }
 assert(afterDelete.c === 0, "Memoria eliminada correctamente")
 
+// Test 8: Fallback project→global cuando no hay worktree
+console.log(`\n${symbols.package} Test 8: Fallback project→global (no worktree)`)
+const { default: pluginFactory } = await import("../src/engram.js")
+const plugin = await pluginFactory({}, { global_dir: globalDir })
+const statusBefore = await plugin.tool.engram_status.execute({}, { worktree: undefined } as never)
+const beforeMatch = statusBefore.output.match(/\((\d+) memorias\)/)
+const beforeCount = beforeMatch ? parseInt(beforeMatch[1]!, 10) : -1
+const saveResult = await plugin.tool.engram_save.execute(
+  { title: "Fallback test", content: "Debe guardarse en global cuando no hay worktree", type: "general", scope: "project", importance: 0.7 },
+  { worktree: undefined } as never,
+)
+assert(saveResult.output.includes("guardada (global)"), "Sin worktree, scope=project cae a global")
+assert(saveResult.output.includes("no worktree detected"), "Warning de fallback presente en output")
+const statusAfter = await plugin.tool.engram_status.execute({}, { worktree: undefined } as never)
+const afterMatch = statusAfter.output.match(/\((\d+) memorias\)/)
+const afterCount = afterMatch ? parseInt(afterMatch[1]!, 10) : -1
+assert(afterCount === beforeCount + 1, `Memoria guardada en global DB (${beforeCount} -> ${afterCount})`)
+
 // Cleanup
 db.close()
 dbp.close()

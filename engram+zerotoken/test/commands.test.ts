@@ -26,6 +26,13 @@ function setupDeps() {
   return { db, globalDbPath, engine }
 }
 
+function setupEmptyDeps() {
+  const globalDbPath = join(work, "empty.db")
+  const db = new DatabaseManager(globalDbPath)
+  const engine = new MemoryEngine(db)
+  return { db, globalDbPath, engine }
+}
+
 describe("tool factories", () => {
   test("buildGraphTool returns a tool definition", async () => {
     const { buildGraphTool } = await import("../src/commands.js")
@@ -186,5 +193,39 @@ describe("engram_compact tool (via buildCompactTool)", () => {
     expect(typeof result.metadata?.plan?.keep).toBe("number")
     expect(typeof result.metadata?.plan?.merge).toBe("number")
     expect(typeof result.metadata?.plan?.drop).toBe("number")
+  })
+})
+
+describe("edge cases: empty DB", () => {
+  test("engram_compact on empty DB does not throw, returns empty plan", async () => {
+    const { buildCompactTool } = await import("../src/commands.js")
+    const { db, globalDbPath } = setupEmptyDeps()
+    const t = buildCompactTool({ db, globalDbPath })
+    const result = await t.execute({ dry_run: true, apply: false, scope: "global" }, { worktree: work } as any)
+    expect(result.metadata?.plan?.keep).toBe(0)
+    expect(result.metadata?.plan?.merge).toBe(0)
+    expect(result.metadata?.plan?.drop).toBe(0)
+    expect(result.output).toBeDefined()
+  })
+
+  test("engram_export on empty DB produces valid markdown (H1, no crash)", async () => {
+    const { buildExportTool } = await import("../src/commands.js")
+    const { db, globalDbPath } = setupEmptyDeps()
+    const t = buildExportTool({ db, globalDbPath })
+    const outPath = join(work, "empty-export.md")
+    await t.execute({ scope: "global", output: outPath, limit: 50 }, { worktree: work } as any)
+    expect(existsSync(outPath)).toBe(true)
+    const content = readFileSync(outPath, "utf-8")
+    expect(content).toMatch(/^#\s/m)
+  })
+
+  test("engram_graph on DB with single memory produces valid Mermaid with 1 node", async () => {
+    const { buildGraphTool } = await import("../src/commands.js")
+    const { db, globalDbPath, engine } = setupEmptyDeps()
+    engine.save({ title: "Solo memory", content: "Una sola memoria para el test de borde", type: "general", source: "manual", importance: 0.5 }, "global")
+    const t = buildGraphTool({ db, globalDbPath })
+    const result = await t.execute({ layout: "TD", color_by_type: true }, { worktree: work } as any)
+    expect(result.output).toContain("```mermaid")
+    expect(result.output).toMatch(/Solo memory/)
   })
 })

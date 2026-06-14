@@ -209,7 +209,7 @@ export function buildCompactTool(deps: CommandDeps) {
         [],
         args.scope,
       ) as MemoryRecord[]
-      if (!records.length) return { output: `${symbols.warning} No hay memorias en scope=${args.scope}.` }
+      if (!records.length) return { output: `${symbols.warning} No hay memorias en scope=${args.scope}.`, metadata: { dry_run: true, plan: { keep: 0, merge: 0, drop: 0 } } }
       const report = decayReport(records, opts)
       const result = compactCandidates(records, opts, args.max_keep)
       const wouldDrop = result.drop.length

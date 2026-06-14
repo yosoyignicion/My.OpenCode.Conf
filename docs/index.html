@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MY·CONF — A working memory for your opencode</title>
+  <meta name="description" content="250 skills, persistent memory, premium-line background jobs. A reproducible opencode bundle." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg-2: #111;
+      --surface: #161616;
+      --surface-hi: #1e1e1e;
+      --border: #2a2a2a;
+      --text: #e8e8e8;
+      --text-dim: #8a8a8a;
+      --text-bright: #fff;
+      --red: #dc2626;
+      --red-bright: #ff1744;
+      --red-glow: rgba(255, 23, 68, 0.35);
+      --display: 'Bebas Neue', Impact, 'Helvetica Neue Condensed', sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 15px; line-height: 1.6; }
+    body { min-height: 100vh; padding: 0; overflow-x: hidden; }
+
+    /* ─── HERO ─────────────────────────────────────── */
+    .hero {
+      padding: 14vh 6vw 10vh;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 0%, rgba(220, 38, 38, 0.15), transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 100%, rgba(255, 23, 68, 0.08), transparent 60%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; max-width: 1200px; margin: 0 auto; }
+    .hero-banner {
+      font-family: var(--display);
+      font-size: clamp(64px, 14vw, 180px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--text-bright);
+      margin-bottom: 24px;
+    }
+    .hero-banner .my { color: var(--red-bright); text-shadow: 0 0 40px var(--red-glow), 0 0 12px var(--red-glow); display: block; }
+    .hero-banner .conf { display: block; }
+    .hero-banner .dot { color: var(--red-bright); }
+    .hero-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      margin-bottom: 32px;
+    }
+    .hero-sub {
+      max-width: 720px;
+      font-size: clamp(16px, 2vw, 19px);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .hero-sub strong { color: var(--text-bright); font-weight: 700; }
+    .hero-sub em { color: var(--red-bright); font-style: normal; font-weight: 500; }
+
+    /* ─── STATS GRID ───────────────────────────────── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat { background: var(--bg); padding: 32px 24px; }
+    .stat-num {
+      font-family: var(--display);
+      font-size: 48px;
+      line-height: 1;
+      color: var(--red-bright);
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ─── SECTIONS ─────────────────────────────────── */
+    section { padding: 80px 6vw; max-width: 1200px; margin: 0 auto; }
+    h2 {
+      font-family: var(--display);
+      font-size: clamp(32px, 5vw, 56px);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-bright);
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--red);
+      padding-bottom: 8px;
+      display: inline-block;
+    }
+    h2 + p { color: var(--text-dim); margin-bottom: 32px; max-width: 760px; }
+
+    /* ─── FEATURE GRID ─────────────────────────────── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .feature {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      padding: 24px;
+    }
+    .feature h3 {
+      font-family: var(--display);
+      font-size: 24px;
+      letter-spacing: 0.04em;
+      color: var(--text-bright);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .feature p { font-size: 14px; color: var(--text-dim); }
+
+    /* ─── CODE BLOCK ───────────────────────────────── */
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      padding: 20px 24px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.7;
+      margin: 16px 0;
+      color: var(--text);
+    }
+    pre .c-tag { color: var(--red-bright); }
+    pre .c-dim { color: var(--text-dim); }
+    code { font-family: var(--mono); }
+
+    /* ─── CTA ──────────────────────────────────────── */
+    .cta {
+      display: inline-block;
+      padding: 14px 28px;
+      background: transparent;
+      border: 2px solid var(--red);
+      color: var(--red-bright);
+      font-family: var(--display);
+      font-size: 20px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .cta:hover {
+      background: var(--red);
+      color: var(--text-bright);
+      box-shadow: 0 0 24px var(--red-glow);
+    }
+    .cta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
+
+    /* ─── FOOTER ───────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 6vw;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+    }
+    footer a { color: var(--red-bright); text-decoration: none; }
+
+    /* ─── ANIMATIONS ───────────────────────────────── */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .live::before {
+      content: "●";
+      color: var(--red-bright);
+      margin-right: 8px;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .live::before { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">v1.0 · MIT · Open source</div>
+      <h1 class="hero-banner">
+        <span class="my">MY</span>
+        <span class="conf">CONF<span class="dot">·</span></span>
+      </h1>
+      <p class="hero-sub">
+        A reproducible <strong>opencode bundle</strong> that turns your terminal into a calm, persistent, premium-line runtime.
+        <strong>250 skills</strong> on demand, <strong>SQLite+FTS5 memory</strong> that survives between sessions, and a background-job
+        orchestrator that returns <em>one line</em> instead of 200. Built by <em>ignicion</em>, 2026.
+      </p>
+      <div class="cta-row">
+        <a class="cta" href="https://github.com/yosoyignicion/My.OpenCode.Conf">★ View on GitHub</a>
+        <a class="cta" href="memories.html">🧠 Live Memories</a>
+        <a class="cta" href="https://github.com/yosoyignicion/My.OpenCode.Conf#-prompt-maestro-instalar-my-opencode-desde-cero-cualquier-os">⬇ Install</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">250</div><div class="stat-label">Skills curated</div></div>
+    <div class="stat"><div class="stat-num">89</div><div class="stat-label">Tests passing</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">MCP servers</div></div>
+    <div class="stat"><div class="stat-num">0€</div><div class="stat-label">To install</div></div>
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Prompt maestro</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Reversible</div></div>
+  </div>
+
+  <section>
+    <h2>What it is</h2>
+    <p>Three independent open-source subprojects glued by a single prompt maestro. No installer. No lock-in. Cloning the repo and pasting one prompt into <code>opencode</code> reconfigures your entire agent.</p>
+    <div class="features">
+      <div class="feature"><h3>Skill Matrix</h3><p>250 SKILL.md folders covering Next.js, K8s, Go, Rust, ML, design patterns, auto-healing, and more. Auto-discovered on startup.</p></div>
+      <div class="feature"><h3>second-termux</h3><p>MCP server that runs long jobs in the background and returns a single premium line. <code>✨ build ✓ 0 (4m12s) @14:30</code> instead of 400 lines of webpack noise.</p></div>
+      <div class="feature"><h3>engram + zerotoken</h3><p>Persistent memory between sessions. SQLite + FTS5 with 8 memory types, automatic decay, and 2-3 relevant memories injected per prompt.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <p>The bundle is configured by a single global <code>opencode.jsonc</code> that points at the repo's subfolders. No copying. No installation scripts. The agent discovers everything at startup.</p>
+<pre><span class="c-tag">// ~/.config/opencode/opencode.jsonc</span>
+{
+  <span class="c-dim">"skills"</span>: {
+    <span class="c-dim">"paths"</span>: [
+      <span class="c-tag">"/path/to/My.OpenCode.Conf/skill-matrix/skills-matrix"</span>,
+      <span class="c-tag">"/path/to/My.OpenCode.Conf/second-termux-v2/opencode-integration"</span>
+    ]
+  },
+  <span class="c-dim">"mcp"</span>: {
+    <span class="c-dim">"context7"</span>: { <span class="c-dim">"type"</span>: <span class="c-tag">"remote"</span>, <span class="c-dim">"url"</span>: <span class="c-tag">"https://mcp.context7.com/mcp"</span>, <span class="c-dim">"enabled"</span>: <span class="c-tag">true</span> },
+    <span class="c-dim">"sqlite"</span>:   { <span class="c-dim">"type"</span>: <span class="c-tag">"local"</span>,  <span class="c-dim">"command"</span>: [<span class="c-tag">"npx"</span>,<span class="c-tag">"-y"</span>,<span class="c-tag">"mcp-sqlite"</span>,<span class="c-tag">"./data.db"</span>], <span class="c-dim">"enabled"</span>: <span class="c-tag">true</span> },
+    <span class="c-dim">"second-termux"</span>: { <span class="c-dim">"type"</span>: <span class="c-tag">"local"</span>, <span class="c-dim">"command"</span>: [<span class="c-tag">"node"</span>,<span class="c-tag">".../dist/src/server.js"</span>], <span class="c-dim">"enabled"</span>: <span class="c-tag">true</span> }
+  },
+  <span class="c-dim">"plugin"</span>: [[ <span class="c-tag">"file:///.../engram+zerotoken/src/engram.ts"</span>, { <span class="c-dim">"auto_save"</span>: {}, <span class="c-dim">"injection"</span>: {} }]]
+}</pre>
+  </section>
+
+  <section>
+    <h2><span class="live">Live</span>Memories</h2>
+    <p>Every pushed commit regenerates this page from the agent's persistent memory. Browse the <a href="memories.html" style="color: var(--red-bright);">live memory stream</a> to see what the bundle has learned across all sessions.</p>
+  </section>
+
+  <footer>
+    <p>MY·CONF · MIT · 2026 · Built by <a href="https://github.com/yosoyignicion">ignicion</a> · Powered by opencode + Claude + a lot of iterations</p>
+  </footer>
+</body>
+</html>
