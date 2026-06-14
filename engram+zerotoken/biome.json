@@ -1,0 +1,6 @@
+{
+  "extends": ["//"],
+  "files": {
+    "include": ["src/**", "test/**", "*.ts"]
+  }
+}

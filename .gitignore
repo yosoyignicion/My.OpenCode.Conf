@@ -13,6 +13,13 @@ dist/
 *.tsbuildinfo
 .tsbuild/
 
+# pnpm lockfiles (not used in this repo; v2.0 removed them)
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+# Bun lockfile variants (we use bun test, not bun install as a workflow)
+bun.lockb
+
 # Logs and backups
 *.log
 *.bak

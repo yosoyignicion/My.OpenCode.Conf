@@ -1,4 +1,4 @@
-<!-- MY·CONF README · darkmode red/black/white · v1.0 -->
+<!-- MY·CONF README · darkmode red/black/white · v2.0 -->
 
 <style>
   :root {
@@ -180,17 +180,19 @@
 <span class="mc-banner-white">      ║  ║ ║║║║───║╣ ║║║║╦╝</span>
 <span class="mc-banner-white">      ╚═╝╚═╝╝╚╝   ╚═╝╝╚╝╩╚═</span>
                                                                   
-                          <span class="mc-red mc-glow">v1.0</span>  ·  <span class="hi">MIT</span>  ·  <span class="br">DARK</span>
+                           <span class="mc-red mc-glow">v2.0</span>  ·  <span class="hi">MIT</span>  ·  <span class="br">DARK</span>
 </pre>
 
 > *Un bundle open-source que convierte `opencode` en algo serio: **250 skills** bajo demanda, memoria persistente entre sesiones, y un orquestador que devuelve una **sola línea premium** en vez de inundar tu terminal.*
 
 <span class="mc-tag mc-tag--red">DARK MODE</span>
-<span class="mc-tag">v1.0.0</span>
+<span class="mc-tag">v2.0.0</span>
 <span class="mc-tag">MIT</span>
 <span class="mc-tag">250 SKILLS</span>
 <span class="mc-tag">3 MCPs</span>
 <span class="mc-tag">REVERSIBLE</span>
+<span class="mc-tag">BIOME LINTED</span>
+<span class="mc-tag">CI VERIFIED</span>
 
 ---
 
@@ -261,6 +263,41 @@ No es magia. Es ingeniería honesta: **TypeScript, SQLite, FTS5, y un montón de
 | [`engram+zerotoken/`](engram+zerotoken/README.md) | Plugin opencode con memoria tipada en SQLite+FTS5, auto-save, decay | TypeScript (Bun) | sin build step |
 
 > *Los tres son **independientes** y se pueden usar por separado. La magia está en que se hablan entre sí a través de MCP, un protocolo abierto.*
+
+---
+
+## 🆕 v2.0 — qué cambió
+
+> *Bump de versión unificado a 2.0.0 en el bundle completo. Cambios livianos en engram, robustos en second-termux, equivalentes a v2 en el catálogo de skills.*
+
+### Cambios duros (los que un agente nota)
+
+| Subproyecto | Cambio | Justificación |
+|---|---|---|
+| `second-termux-v2/` | Suprimido `install.sh` y scripts `install:global` / `uninstall:global` del `package.json` | El script `install.sh` no existía en disco (huérfano desde v1.0). El prompt maestro de este README es el único install path. |
+| Repo | Eliminados `pnpm-lock.yaml` y `pnpm-workspace.yaml` de los 2 subproyectos | `pnpm` no se ejecuta en este host; los lockfiles eran ruido cross-platform-only. |
+| Repo | Añadido `biome.json` raíz + por subproyecto (extend `//`) | Linter/formatter único, cero config por TS, mismo binario. |
+| Repo | Añadidos `scripts/verify.sh` y `scripts/regen-index.mjs` | Verificación en un solo comando; INDEX auto-regenerable y chequeable por CI. |
+| `.github/workflows/verify.yml` | Nuevo workflow | Corre `verify.sh` + INDEX freshness en cada push/PR. |
+| `engram+zerotoken/` | Bump a 2.0.0; añadidos scripts `lint`/`format`; per-test targets | Consistencia con el resto del bundle. |
+| `second-termux-v2/opencode-integration/opencode.fragment.jsonc` | Reescrito: minimalista, con `<REPO>` placeholder, cubre los 3 MCPs + skills + plugin engram | El fragment es único para el bundle completo, no solo para second-termux. |
+| `skill-matrix/skills-matrix/INDEX.md` | Regenerado desde filesystem (250 skills reales) | Antes: stale con 250 hard-coded; ahora: ground truth vía `node scripts/regen-index.mjs`. |
+
+### Lo que no cambió (intencionalmente)
+
+- La arquitectura de 3 subproyectos independientes.
+- El protocolo dual-agent (heredado de `~/.config/opencode/AGENTS.md`).
+- La política zero-token.
+- La forma del "Prompt maestro" — sigue siendo texto, no binario.
+- La reversibilidad total (uninstall restaura la config previa).
+
+### Verificación
+
+```bash
+./scripts/verify.sh         # full: build + test + typecheck
+./scripts/verify.sh quick   # skip slow engram tests
+node scripts/regen-index.mjs --check   # INDEX freshness
+```
 
 ---
 

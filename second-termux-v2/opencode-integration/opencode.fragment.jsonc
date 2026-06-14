@@ -1,20 +1,31 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "_comment": "Template fragment. The installer (install.sh) replaces __SECOND_TERMUX_REPO__ and __SECOND_TERMUX_SERVER_JS__ with the actual paths on the user's machine. You don't need to edit this file manually — just run ./install.sh.",
+  "//": "Bundle fragment for my-opencode. Substitute <REPO> with `realpath` of the cloned bundle directory. The installer (see README.md 'Prompt maestro') does this automatically. No install.sh — the prompt in README is the only install path.",
   "skills": {
     "paths": [
-      "__SECOND_TERMUX_SKILL_PATH__"
+      "<REPO>/skill-matrix/skills-matrix",
+      "<REPO>/second-termux-v2/opencode-integration"
     ]
   },
   "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    },
+    "sqlite": {
+      "type": "local",
+      "command": ["npx", "-y", "mcp-sqlite", "./data.db"],
+      "enabled": true
+    },
     "second-termux": {
       "type": "local",
-      "command": [
-        "node",
-        "__SECOND_TERMUX_SERVER_JS__"
-      ],
+      "command": ["node", "<REPO>/second-termux-v2/dist/src/server.js"],
       "enabled": true,
       "timeout": 30000
     }
-  }
+  },
+  "plugin": [
+    "file://<REPO>/engram+zerotoken/src/engram.ts"
+  ]
 }
