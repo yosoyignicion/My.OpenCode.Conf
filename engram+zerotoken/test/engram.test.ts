@@ -1,4 +1,4 @@
-import Database from "better-sqlite3"
+import { Database } from "bun:sqlite"
 import { mkdirSync, existsSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
@@ -28,40 +28,38 @@ function assert(condition: boolean, msg: string) {
 
 // Test 1: Create global DB with FTS5
 console.log(`\n${symbols.package} Test 1: Creación de DB global con FTS5`)
-const db = new Database(globalPath)
-db.pragma("journal_mode = WAL")
-db.exec(`
-  CREATE TABLE IF NOT EXISTS observations (
-    id TEXT PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL,
-    type TEXT NOT NULL DEFAULT 'general', source TEXT NOT NULL DEFAULT 'manual',
-    importance REAL DEFAULT 1.0, access_count INTEGER DEFAULT 0,
-    last_accessed_at TEXT, created_at TEXT NOT NULL, updated_at TEXT
-  );
-  CREATE VIRTUAL TABLE IF NOT EXISTS observations_fts USING fts5(
-    title, content, type,
-    tokenize='trigram',
-    content=observations, content_rowid=rowid
-  );
-  CREATE TRIGGER IF NOT EXISTS observations_ai AFTER INSERT ON observations BEGIN
-    INSERT INTO observations_fts(rowid, title, content, type)
-    VALUES (new.rowid, new.title, new.content, new.type);
-  END;
-`)
+const db = new Database(globalPath, { create: true })
+db.run("PRAGMA journal_mode = WAL")
+db.run(`CREATE TABLE IF NOT EXISTS observations (
+  id TEXT PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'general', source TEXT NOT NULL DEFAULT 'manual',
+  importance REAL DEFAULT 1.0, access_count INTEGER DEFAULT 0,
+  last_accessed_at TEXT, created_at TEXT NOT NULL, updated_at TEXT
+)`)
+db.run(`CREATE VIRTUAL TABLE IF NOT EXISTS observations_fts USING fts5(
+  title, content, type,
+  tokenize='trigram',
+  content=observations, content_rowid=rowid
+)`)
+db.run(`CREATE TRIGGER IF NOT EXISTS observations_ai AFTER INSERT ON observations BEGIN
+  INSERT INTO observations_fts(rowid, title, content, type)
+  VALUES (new.rowid, new.title, new.content, new.type);
+END`)
 assert(true, "DB global + FTS5 + triggers creados")
 
 // Test 2: Insert and verify FTS sync
 console.log(`\n${symbols.package} Test 2: Inserción y sincronización FTS5`)
-db.prepare(`INSERT INTO observations (id, title, content, type, source, importance, created_at)
+db.query(`INSERT INTO observations (id, title, content, type, source, importance, created_at)
   VALUES (?, ?, ?, ?, ?, ?, ?)`).run(
   "test-1", "Express TypeScript", "Este proyecto usa Express con TypeScript",
   "config", "manual", 0.8, new Date().toISOString()
 )
-db.prepare(`INSERT INTO observations (id, title, content, type, source, importance, created_at)
+db.query(`INSERT INTO observations (id, title, content, type, source, importance, created_at)
   VALUES (?, ?, ?, ?, ?, ?, ?)`).run(
   "test-2", "API Key en .env.local", "La API key de Stripe está en .env.local",
   "config", "auto_keyword", 0.9, new Date().toISOString()
 )
-db.prepare(`INSERT INTO observations (id, title, content, type, source, importance, created_at)
+db.query(`INSERT INTO observations (id, title, content, type, source, importance, created_at)
   VALUES (?, ?, ?, ?, ?, ?, ?)`).run(
   "test-3", "Error: conexion DB", "Error de conexión a PostgreSQL: timeout. Solución: aumentar pool_size a 20",
   "error_solution", "auto_error_fix", 0.85, new Date().toISOString()
@@ -70,7 +68,7 @@ assert(true, "3 memorias insertadas")
 
 // Test 3: FTS5 search with trigram
 console.log(`\n${symbols.package} Test 3: Búsqueda FTS5 con trigramas`)
-const results1 = db.prepare(
+const results1 = db.query(
   `SELECT o.id, o.title, rank FROM observations_fts
    JOIN observations o ON o.rowid = observations_fts.rowid
    WHERE observations_fts MATCH ? ORDER BY rank DESC`
@@ -78,7 +76,7 @@ const results1 = db.prepare(
 assert(results1.length === 1, `Busqueda 'Express TypeScript': ${results1.length} resultado(s)`)
 assert((results1[0] as any).id === "test-1", "Resultado correcto: test-1")
 
-const results2 = db.prepare(
+const results2 = db.query(
   `SELECT o.id, o.title, rank FROM observations_fts
    JOIN observations o ON o.rowid = observations_fts.rowid
    WHERE observations_fts MATCH ? ORDER BY rank DESC`
@@ -87,14 +85,14 @@ assert(results2.length === 1, `Busqueda 'API key': ${results2.length} resultado(
 
 // Test 4: Approximate matching with trigram
 console.log(`\n${symbols.package} Test 4: Matching aproximado con trigramas`)
-const results3 = db.prepare(
+const results3 = db.query(
   `SELECT o.id, o.title, rank FROM observations_fts
    JOIN observations o ON o.rowid = observations_fts.rowid
    WHERE observations_fts MATCH ? ORDER BY rank DESC`
 ).all('"Stripe"')
 assert(results3.length === 1, `Busqueda 'Stripe' (encontrado via trigramas): ${results3.length} resultado(s)`)
 
-const results4 = db.prepare(
+const results4 = db.query(
   `SELECT o.id, o.title, rank FROM observations_fts
    JOIN observations o ON o.rowid = observations_fts.rowid
    WHERE observations_fts MATCH ? ORDER BY rank DESC`
@@ -103,7 +101,7 @@ assert(results4.length >= 1, `Busqueda parcial 'Express': ${results4.length} res
 
 // Test 5: Error fix partial match
 console.log(`\n${symbols.package} Test 5: Match aproximado de error`)
-const results5 = db.prepare(
+const results5 = db.query(
   `SELECT o.id, o.title, rank FROM observations_fts
    JOIN observations o ON o.rowid = observations_fts.rowid
    WHERE observations_fts MATCH ? ORDER BY rank DESC`
@@ -112,26 +110,26 @@ assert(results5.length >= 1, `Busqueda 'conexion' (typo en 'conexion' vs 'conexi
 
 // Test 6: Project DB isolation
 console.log(`\n${symbols.package} Test 6: Aislamiento de DB de proyecto`)
-const dbp = new Database(projectPath)
-dbp.pragma("journal_mode = WAL")
-dbp.exec(`CREATE TABLE IF NOT EXISTS observations (
-    id TEXT PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL,
-    type TEXT NOT NULL DEFAULT 'general', source TEXT NOT NULL DEFAULT 'manual',
-    importance REAL DEFAULT 1.0, access_count INTEGER DEFAULT 0,
-    last_accessed_at TEXT, created_at TEXT NOT NULL, updated_at TEXT
-  )`)
-dbp.prepare(`INSERT INTO observations (id, title, content, type, source, importance, created_at)
+const dbp = new Database(projectPath, { create: true })
+dbp.run("PRAGMA journal_mode = WAL")
+dbp.run(`CREATE TABLE IF NOT EXISTS observations (
+  id TEXT PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'general', source TEXT NOT NULL DEFAULT 'manual',
+  importance REAL DEFAULT 1.0, access_count INTEGER DEFAULT 0,
+  last_accessed_at TEXT, created_at TEXT NOT NULL, updated_at TEXT
+)`)
+dbp.query(`INSERT INTO observations (id, title, content, type, source, importance, created_at)
   VALUES (?, ?, ?, ?, ?, ?, ?)`).run(
   "proj-1", "Proyecto local", "Memoria específica del proyecto",
   "general", "tool", 0.7, new Date().toISOString()
 )
-const projCount = dbp.prepare("SELECT COUNT(*) as c FROM observations").get() as { c: number }
+const projCount = dbp.query("SELECT COUNT(*) as c FROM observations").get() as { c: number }
 assert(projCount.c === 1, "DB de proyecto aislada: 1 memoria")
 
 // Test 7: Delete
 console.log(`\n${symbols.package} Test 7: Eliminación`)
-dbp.prepare("DELETE FROM observations WHERE id = ?").run("proj-1")
-const afterDelete = dbp.prepare("SELECT COUNT(*) as c FROM observations").get() as { c: number }
+dbp.query("DELETE FROM observations WHERE id = ?").run("proj-1")
+const afterDelete = dbp.query("SELECT COUNT(*) as c FROM observations").get() as { c: number }
 assert(afterDelete.c === 0, "Memoria eliminada correctamente")
 
 // Cleanup

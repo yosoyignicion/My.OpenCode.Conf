@@ -73,18 +73,8 @@ log ""
 
 # Step 3: Run all *.test.ts via bun test
 log "${BOLD}[3/6] Run bun test test/${RESET}"
-TEST_FILES=(render.test.ts decay.test.ts graph.test.ts commands.test.ts)
-LEGACY_TESTS=(engram.test.ts)
+TEST_FILES=(render.test.ts decay.test.ts graph.test.ts commands.test.ts engram.test.ts)
 
-# Run legacy tests first with tsx (better-sqlite3 incompatible with bun)
-if [ ${#LEGACY_TESTS[@]} -gt 0 ] && [ -f "$PROJECT_ROOT/node_modules/.bin/tsx" ]; then
-  info "Legacy tests: running with tsx (better-sqlite3 not supported by bun)"
-  for tf in "${LEGACY_TESTS[@]}"; do
-    fpath="$TEST_DIR/$tf"
-    if [ ! -f "$fpath" ]; then continue; fi
-    cd "$PROJECT_ROOT" && ./node_modules/.bin/tsx "$fpath" 2>&1 | tail -3 || true
-  done
-fi
 if command -v bun >/dev/null 2>&1; then
   for tf in "${TEST_FILES[@]}"; do
     fpath="$TEST_DIR/$tf"

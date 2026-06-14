@@ -40,15 +40,14 @@ There is **no `opencode.json` at the repo root**. opencode discovers everything 
 
 ## 2. Commands the agent would otherwise guess wrong
 
-> **Package manager**: user prefers **pnpm** over npm for new installs. `pnpm install` / `pnpm run build` work as drop-in replacements in both `second-termux-v2/` and `engram+zerotoken/`. **`pnpm test` only works in `second-termux-v2/`** — for engram, use the bun/tsx split documented below. Legacy `npm` references in docs are kept for back-compat; translate to `pnpm` mentally where it works.
+> **Package manager**: user prefers **pnpm** over npm for new installs. `pnpm install` / `pnpm run build` / `pnpm test` work as drop-in replacements in both `second-termux-v2/` and `engram+zerotoken/`. Legacy `npm` references in docs are kept for back-compat; translate to `pnpm` mentally.
 
 | Task | Command | Where |
 |---|---|---|
 | Build second-termux (TS → JS) | `pnpm run build` (or `npm run build`) | `second-termux-v2/` |
 | Run second-termux tests | `pnpm test` (uses `tsx`, **not bun**) | `second-termux-v2/` |
 | Typecheck engram plugin | `pnpm run typecheck` (tsc --noEmit) | `engram+zerotoken/` |
-| Run engram tests (bun:sqlite, 4 files) | `bun test test/commands.test.ts test/decay.test.ts test/graph.test.ts test/render.test.ts` | `engram+zerotoken/` |
-| Run engram DB test (better-sqlite3, 1 file) | `npx tsx test/engram.test.ts` | `engram+zerotoken/` |
+| Run engram tests (all 5 files, bun-only) | `bun test test/` | `engram+zerotoken/` |
 | Run engram smoke (shell) | `bun run test:smoke` | `engram+zerotoken/` |
 | Verify MCP connectivity | `opencode mcp list` | shell |
 | Sanity check second-termux binary | `bgx echo "smoke"` (must print `✨ ...`) | shell |
@@ -57,9 +56,7 @@ There is **no `opencode.json` at the repo root**. opencode discovers everything 
 
 > **Skill count**: README says 231, router footer says 228, filesystem returns **250** (249 + `auto-binding-rebuild`). Trust `find`, not prose. Catalogue in `skill-matrix/skills-matrix/INDEX.md`.
 
-> **Runtime trap**: engram's `package.json` has `better-sqlite3` under `devDependencies` (tests only) and uses `bun:sqlite` at runtime. The two coexist. Do not "consolidate" them by moving `better-sqlite3` to `dependencies` — that breaks the plugin's `bun`-only runtime assumption. **Also**: `bun` cannot `dlopen` `better-sqlite3` (oven-sh/bun#4290), so `test/engram.test.ts` MUST run with `npx tsx` (Node), not `bun test`. The other 4 test files use `bun:sqlite` and run fine with `bun test`.
-
-> **Native binding rebuild**: if the prebuilt `better-sqlite3` binary is missing for your Node version (e.g. patch versions like 24.16 when maintainer only ships 24.3), rebuild with `sudo apt install -y python3 make g++ && npm rebuild better-sqlite3 --build-from-source` inside `engram+zerotoken/`. Symptom: `Could not locate the bindings file ... compiled/{node}/linux/x64/better_sqlite3.node`.
+> **Runtime trap**: engram uses `bun:sqlite` exclusively (compiled into bun, no native binding). Do not reintroduce `better-sqlite3` as a runtime dependency — it forces Node + toolchain (python3/make/g++) on every install and is incompatible with bun (oven-sh/bun#4290).
 
 ---
 
@@ -127,7 +124,7 @@ Runtime state lives **outside the project**. Never recreate it inside.
 - **Treating this repo as a single TypeScript project.** It is not. Each subproject is independent.
 - **Committing `engram+zerotoken/.engram/`.** Already git-ignored, but `git add -f` would break it. Snapshot is a personal backup, not source of truth.
 - **Running `bun test` in second-termux-v2.** Uses `tsx`, not bun. `pnpm test` (or `npm test`) is correct there.
-- **Running `bun test` over all of `engram+zerotoken/test/`.** `engram.test.ts` imports `better-sqlite3` (Node-only); bun cannot dlopen it (oven-sh/bun#4290). Run that file with `npx tsx test/engram.test.ts` (Node). The other 4 files are bun-only. **Also**: `npm test` (delegates to `bun test test/`) is therefore broken until `engram.test.ts` is refactored to use `bun:sqlite` or the bun issue is closed.
+- **Running `bun test` over all of `engram+zerotoken/test/`.** Was: `engram.test.ts` imported `better-sqlite3` (Node-only); bun cannot dlopen it (oven-sh/bun#4290). **Fixed in the refactor commit**: `engram.test.ts` now uses `bun:sqlite` and `npm test` works as expected. If you reintroduce `better-sqlite3` for any reason, restore the dual-runner workaround from git history.
 - **Trusting prose over filesystem for skill count.** README, router footer, and filesystem disagree (228/231/249). Always run `find`.
 
 ---
@@ -143,7 +140,7 @@ find skill-matrix/skills-matrix -maxdepth 1 -mindepth 1 -type d | wc -l
 ( cd second-termux-v2 && pnpm run build && pnpm test )
 
 # 3. engram typechecks + tests
-( cd engram+zerotoken && pnpm run typecheck && bun test test/commands.test.ts test/decay.test.ts test/graph.test.ts test/render.test.ts && npx tsx test/engram.test.ts )
+( cd engram+zerotoken && pnpm run typecheck && bun test test/ )
 
 # 4. All 3 MCPs reachable
 opencode mcp list   # must show context7, sqlite, second-termux all "connected"

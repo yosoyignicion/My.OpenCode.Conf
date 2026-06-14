@@ -1,8 +1,10 @@
 # auto-binding-rebuild
 
+> **Cross-project skill** — Aplica a cualquier proyecto Node con native modules (better-sqlite3, bcrypt, sharp, canvas, etc.) en máquinas donde el prebuilt del maintainer no esté disponible o donde bun no soporte el módulo. **Este skill es agnóstico al proyecto concreto**: el `engram+zerotoken` que lo originó ya no lo necesita (migró a `bun:sqlite` puro), pero el conocimiento sigue siendo útil para reinstalaciones, nuevos proyectos Node, o cuando un contributor reintroduzca `better-sqlite3` por accidente.
+
 ## Semantic Triggers
 ```
-binding rebuild, native module, better-sqlite3, node-gyp, python3 make g++, prebuilt binary, dlopen failed, bun native module, ERR_DLOPEN_FAILED, prebuild-install
+binding rebuild, native module, better-sqlite3, node-gyp, python3 make g++, prebuilt binary, dlopen failed, bun native module, ERR_DLOPEN_FAILED, prebuild-install, dlopen, binding missing
 ```
 
 ---
@@ -162,6 +164,7 @@ CMD ["node", "dist/server.js"]
 | **Cuándo evitar native modules** | Lambdas serverless (cold start + 250 MB zip limit), edge runtimes (V8 isolates sin dlopen), proyectos con zero-deps philosophy |
 | **Alternativas** | Pure-JS modules (sql.js, bcryptjs — más lentas pero portables), WASM modules (mejor portabilidad, peor FFI), musl libc static builds (Alpine sin glibc) |
 | **Coste/Complejidad** | Build: 30s-2min por módulo en hardware moderno; toolchain: 150 MB en disco; alternativa: 5-30s de download con prebuilt; trade-off tiempo-setup vs portabilidad |
+| **Cuándo NO necesitas este skill localmente** | Tu proyecto migró a un driver puro (ej: `bun:sqlite`, WASM, o sql.js). Mantén el skill accesible pero márcalo en metadata como `applies_to_local_project: false` para no confundir futuras sesiones. |
 
 ---
 
@@ -329,14 +332,19 @@ npx tsx test/file-that-uses-better-sqlite3.test.ts
 ---
 id: auto-binding-rebuild
 domain: dev-environment
-version: 1.0.0
+version: 1.1.0
 created: 2026-06-14
 updated: 2026-06-14
 author: opencode-agent
 status: active
-archive_after: 2026-08-13
+applies_to_local_project: false  # el proyecto que lo originó (engram+zerotoken) ya migró a bun:sqlite
+applies_to: "any Node project with native modules where (a) prebuilt missing or (b) bun doesn't dlopen the binding"
+origin_project: my-opencode-conf / engram+zerotoken
+origin_trigger: "engram.test.ts importó better-sqlite3; oven-sh/bun#4290 bloqueó bun test"
+origin_resolution: "refactor a bun:sqlite (commit <ref>) + eliminación de dep + este skill queda como knowledge base"
+archive_after: 2026-08-13  # 60 días sin uso
 source: nueva-creacion
-tags: [binding, node-gyp, native-module, better-sqlite3, dlopen, build-from-source, bun, devops, debugging]
+tags: [binding, node-gyp, native-module, better-sqlite3, dlopen, build-from-source, bun, devops, debugging, cross-project]
 ---
 ```
 
