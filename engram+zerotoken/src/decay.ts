@@ -12,7 +12,7 @@ export const DEFAULT_DECAY_OPTIONS: DecayOptions = {
   accessBoost: 0.5,
 }
 
-export const IMPORTANCE_WHITELIST_THRESHOLD = 0.85
+export const IMPORTANCE_WHITELIST_THRESHOLD = 0.9
 
 function clamp(v: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, v))

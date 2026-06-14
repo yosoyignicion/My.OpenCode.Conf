@@ -74,7 +74,8 @@ export function createErrorFixDetector(): ErrorFixDetector {
 }
 
 export function detectAll(text: string, errorFix: ErrorFixDetector): AutoSaveCandidate[] {
-  return [...detectKeywordSave(text), ...detectArchitectureSave(text), ...(errorFix.check(text) ? [errorFix.check(text)!] : [])]
+  const errorFixCandidate = errorFix.check(text)
+  return [...detectKeywordSave(text), ...detectArchitectureSave(text), ...(errorFixCandidate ? [errorFixCandidate] : [])]
 }
 
 function truncate(text: string, maxLen = 80): string {
