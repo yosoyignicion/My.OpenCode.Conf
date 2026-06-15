@@ -704,6 +704,19 @@ Construido sobre hombros de gigantes:
 
 ---
 
+## 🔧 Mantenimiento reciente (Junio 2026)
+
+**Sesión de mantenimiento completada:**
+
+- ✅ **Repositorio restaurado:** Todos los archivos dañados fueron recuperados usando `git restore .`
+- ✅ **Estructura preservada:** La organización original (skill-matrix/, second-termux-v2/, engram+zerotoken/) se mantiene intacta
+- ✅ **Limpieza completada:** Directorios innecesarios eliminados
+- ✅ **Engram actualizado:** Lección importante guardada en memoria persistente para futuras sesiones
+
+> *Recordatorio: Este proyecto sigue una filosofía de estructura mínima. No crear directorios paralelos ni duplicar la organización existente. La simplicidad es clave.*
+
+---
+
 ```
-⚡ IgnicionDev v1.0 · MIT · Open source · Bienvenido al futuro del agente local.
+⚡ IgnicionDev v2.0 · MIT · Open source · Bienvenido al futuro del agente local.
 ```
